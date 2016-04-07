@@ -9,7 +9,7 @@ var todos = [{
 {
 	id: 2,
 	description:'Meet Mom for Lunch',
-	isCompleted:false,
+	isCompleted:true,
 },
 {
 	id: 3,
