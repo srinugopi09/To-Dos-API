@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var PORT = process.env.PORT || 3000;
 var bodyParser = require('body-parser');
+var _  = require('underscore');
 
 var todos = [];
 var todoNextId = 1;
@@ -21,18 +22,11 @@ app.get('/todos', function (req, res) {
 app.get('/todos/:id', function (req, res){
 
 	var todoId = parseInt(req.params.id, 10) ;
-	var mactchedTodo;
+	var mactchedTodo = _.findWhere(todos, {id: todoId});
 
-	// Iterate of todos array. Find the match.
-	todos.forEach( function (todo) {
+	// var mactchedTodo;
 
-		console.log(todoId);
 
-		if (todoId === todo.id) {
-
-			mactchedTodo = todo;
-		}
-	});
 	if (mactchedTodo) {
 		res.json(mactchedTodo);
 	} else {
@@ -43,11 +37,19 @@ app.get('/todos/:id', function (req, res){
 //res.send('Asking for todo with id of ' + req.params.id);
 });
 
-//POST /todos/:id
+//POST /todos
 app.post('/todos', function (req,res) {
+	//var body = req.body;
+	//console.log("received"+ body.description);
+	
+	var body = _.pick(req.body, 'description', 'completed');
+	console.log("received"+ body);
 
-	var body = req.body;
+	if (!_.isBoolean(body.completed) || !_.isString(body.description)) {
+		return res.status(400);
+	}
 	body.id = todoNextId;
+	body.description = body.description.trim();
 	todoNextId += todoNextId;
 
 	todos.push(body);
